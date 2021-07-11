@@ -10,12 +10,20 @@ bool Setup( void );
 
 SDL_Renderer* RenderHandle = NULL;
 SDL_Window* MainWindow = NULL;
+SDL_Texture* GameTexture = NULL;
 
 bool MainThreadRun = true;
 
 RaycasterCamera Camera( MainScreenWidth, MainScreenHeight, 60.0f, 1.0f, 1.0f, -270.0f );
 InputManager Input;
 World Worldspawn;
+
+const SDL_Rect Fullscreen = {
+	.h = MainScreenHeight,
+	.w = MainScreenWidth,
+	.x = 0,
+	.y = 0
+};
 
 const uint8_t Map[ 8 * 8 ] = {
 	1, 1, 1, 1, 1, 1, 1, 1,
@@ -28,17 +36,21 @@ const uint8_t Map[ 8 * 8 ] = {
 	1, 1, 1, 1, 1, 1, 1, 1
 };
 
-Color24 Palette[ 256 ] = {
-	{ .Red = 0, .Green = 0, .Blue = 0 },		// Empty
-	{ .Red = 0, .Green = 0, .Blue = 255 },		// Tile_Blue
-	{ .Red = 0, .Green = 255, .Blue = 0 },		// Tile_Green
-	{ .Red = 0, .Green = 255, .Blue = 255 },	// Tile_Cyan
+const uint32_t pal[ 256 ] = {
+	MakeRGBA32( 0, 0, 0, 255 ),
+	MakeRGBA32( 0, 0, 255, 255 ),
+	MakeRGBA32( 0, 255, 0, 255 ),
+	MakeRGBA32( 0, 255, 255, 255 ),
 
-	[ CeilingColor ] = { .Red = 128, .Green = 128, .Blue = 128 },	// Ceiling
-	[ FloorColor ] = { .Red = 64, .Green = 64, .Blue = 64 }			// Floor
+	[ CeilingColor ] = MakeRGBA32( 128, 128, 128, 255 ),
+	[ FloorColor ] = MakeRGBA32( 64, 64, 64, 255 )
 };
 
 void Cleanup( void ) {
+	if ( GameTexture ) {
+		SDL_DestroyTexture( GameTexture );
+	}
+
 	if ( RenderHandle ) {
 		SDL_DestroyRenderer( RenderHandle );
 	}
@@ -52,23 +64,49 @@ void Cleanup( void ) {
 	}
 }
 
+void Terminate( const char* Reason, ... ) {
+	static char Buffer[ 1024 ];
+	va_list Argp;
+
+	va_start( Argp, Reason );
+		vsnprintf( Buffer, sizeof( Buffer ), Reason, Argp );
+	va_end( Argp );
+
+	std::cout << "Terminating application." << std::endl;
+	std::cout << "Reason: " << Buffer << std::endl;
+
+	exit( 1 );
+}
+
 bool Setup( void ) {
-	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) { 
-		printf( "%s\n", SDL_GetError( ) );
-		return false;
+	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
+		Terminate( SDL_GetError( ) );
 	}
 
 	if ( ( MainWindow = SDL_CreateWindow( "Fart",  400, 400, MainScreenWidth, MainScreenHeight, SDL_WINDOW_SHOWN ) ) == NULL ) {
-		printf( "%s\n", SDL_GetError( ) );
-		return false;
+		Terminate( SDL_GetError( ) );
 	}
 
 	if ( ( RenderHandle = SDL_CreateRenderer( MainWindow, -1, 0 ) ) == NULL ) {
-		printf( "%s\n", SDL_GetError( ) );
-		return false;
+		Terminate( SDL_GetError( ) );
+	}
+
+	if ( ( GameTexture = SDL_CreateTexture( RenderHandle, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, MainScreenWidth, MainScreenHeight ) ) == NULL ) {
+		Terminate( "Failed to create render texture", SDL_GetError( ) );
 	}
 
 	return true;
+}
+
+void CopyCameraToScreen( void ) {
+	uint32_t* Pixels = NULL;
+	int Pitch = 0;
+
+	SDL_LockTexture( GameTexture, &Fullscreen, ( void** ) &Pixels, &Pitch );
+		Camera.CopyScreenBuffer32( Pixels, pal, Pitch );
+	SDL_UnlockTexture( GameTexture );
+
+	SDL_RenderCopy( RenderHandle, GameTexture, &Fullscreen, &Fullscreen );
 }
 
 int main( int Argc, char** Argv ) {
@@ -122,6 +160,8 @@ int main( int Argc, char** Argv ) {
 			//Worldspawn.Draw2D( RenderHandle, 64 );
 			//Camera.DrawCamera( RenderHandle, 8 );
 			Camera.Draw3D( RenderHandle );
+
+			CopyCameraToScreen( );
 
 			SDL_RenderPresent( RenderHandle );
 			SDL_Delay( 16 );

@@ -179,32 +179,33 @@ void RaycasterCamera::Draw3D( SDL_Renderer* RenderTarget ) {
 }
 
 void RaycasterCamera::DrawCeiling( void ) {
-    // FIXME:
-    // Proper palette
-    memset( this->ScreenBuffer, CeilingColor, this->ScreenWidth * ( this->ScreenHeight / 2 ) );
+    memset(
+        this->ScreenBuffer,
+        CeilingColor,
+        this->ScreenBufferSize / 2
+    );
 }
 
 void RaycasterCamera::DrawFloor( void ) {
-    int Offset = this->ScreenWidth * ( this->ScreenHeight / 2 );
-
-    // FIXME:
-    // Proper palette
-    memset( &this->ScreenBuffer[ Offset ], FloorColor, Offset );
+    memset(
+        &this->ScreenBuffer[ ( this->ScreenBufferSize / 2 ) ],
+        FloorColor,
+        this->ScreenBufferSize / 2
+    );
 }
 
 void RaycasterCamera::SetupProjectionPlane( void ) {
-    this->ProjPlaneDist = ( ( float ) ( ScreenWidth / 2 ) ) / tan( DegreesToRadians( this->Fov / 2.0f ) );
+    this->ProjPlaneDist = ( ( float ) ( this->ScreenWidth / 2 ) ) / tan( DegreesToRadians( this->Fov / 2.0f ) );
 }
 
 bool RaycasterCamera::AllocateScreenBuffer( void ) {
+    this->ScreenBufferSize = this->ScreenWidth * this->ScreenHeight;
+
     try {
-        ScreenBuffer = new uint8_t[ ScreenWidth * ScreenHeight ];
+        this->ScreenBuffer = new uint8_t[ this->ScreenBufferSize ];
     }
     catch ( std::bad_alloc ) {
-        std::cout << "Failed to allocate framebuffer memory." << std::endl << "Aborting." << std::endl;
-        exit( 1 );
-
-        return false;
+        Terminate( "%s: Failed to allocate %d bytes for camera render buffer", __FUNCTION__, this->ScreenBufferSize );
     }
 
     return true;
@@ -213,10 +214,55 @@ bool RaycasterCamera::AllocateScreenBuffer( void ) {
 void RaycasterCamera::FreeScreenBuffer( void ) {
     if ( this->ScreenBuffer ) {
         delete[ ] this->ScreenBuffer;
+
+        this->ScreenBufferSize = 0;
         this->ScreenBuffer = NULL;
     }
 }
 
 RaycasterCamera::~RaycasterCamera( void ) {
     FreeScreenBuffer( );
+}
+
+void RaycasterCamera::CopyScreenBuffer( uint8_t* Dest, size_t Size ) {
+    if ( Dest != NULL && Size > 0 && Size <= this->ScreenBufferSize ) {
+        memcpy( Dest, this->ScreenBuffer, Size );
+    }
+}
+
+void RaycasterCamera::CopyScreenBuffer( uint8_t* Dest, int DestPitch, int SrcX, int SrcY, int Width, int Height ) {
+    uint8_t* Src = &this->ScreenBuffer[ SrcX + ( SrcY * this->ScreenWidth ) ];
+    int x = 0;
+    int y = 0;
+
+    // todo:
+    // more validation
+    if ( Dest != NULL ) {
+        for ( y = 0; y < Height; y++ ) {
+            memcpy( Dest, Src, Width );
+
+            Src+= this->ScreenWidth;
+            Dest+= DestPitch;
+        }
+    }
+}
+
+void RaycasterCamera::CopyScreenBuffer32( uint32_t* Dest, const uint32_t* Palette, int Pitch ) {
+    uint8_t* Src = this->ScreenBuffer;
+    int x = 0;
+    int y = 0;
+
+    if ( Dest != NULL && Palette != NULL ) {
+        // Convert pitch from bytes to words
+        Pitch>>= 2;
+
+        for ( y = 0; y < this->ScreenHeight; y++ ) {
+            for ( x = 0; x < this->ScreenWidth; x++ ) {
+                *Dest++ = Palette[ *Src++ ];
+            }
+
+            // Set dest ptr to next line
+            Dest+= ( ( this->ScreenWidth - Pitch ) >> 2 );
+        }
+    }
 }

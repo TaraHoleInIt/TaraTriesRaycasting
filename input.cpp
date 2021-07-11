@@ -34,9 +34,6 @@ bool InputManager::IsMovingBackward( void ) {
     return TestExclusiveKey( Key_Backward, Key_Forward ) ? true : false;
 }
 
-void InputManager::KeyEventCallback( SDL_Keysym Key, bool Down ) {
-}
-
 void InputManager::Update( void ) {
     const uint8_t* Keyboard = NULL;
 

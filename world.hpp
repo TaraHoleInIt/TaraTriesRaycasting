@@ -21,13 +21,13 @@ class World {
     int MapSize;
 
 public:
+    int operator( )( int x, int y );
+
     World( void );
     ~World( void );
 
     bool LoadFromMemory( const uint8_t* _Map, int _MapWidth, int _MapHeight );
     void Close( void );
-
-    void Draw2D( SDL_Renderer* RenderTarget, float Scale );
 
     uint8_t TileAt( int x, int y );
 };

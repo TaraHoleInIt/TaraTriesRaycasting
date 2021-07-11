@@ -9,17 +9,19 @@
 #include <iostream>
 #include <cstdint>
 #include <cstdlib>
+#include <cstdarg>
 #include <SDL.h>
 
 #include "raycastcamera.hpp"
 #include "input.hpp"
 #include "world.hpp"
 
-typedef struct {
-    uint8_t Red;
-    uint8_t Green;
-    uint8_t Blue;
-} __attribute__( ( packed ) ) Color24;
+#define MakeRGBA32( r, g, b, a ) static_cast< uint32_t >( ( ( a & 0xFF ) << 24 ) | ( ( r & 0xFF ) << 16 ) | ( ( g & 0xFF ) << 8 ) | ( b & 0xFF ) )
+
+#define ClampInt( Value, Min, Max ) { \
+    Value = Value < Min ? Min : Value; \
+    Value = Value > Max ? Max : Value; \
+}
 
 #define DegreesToRadians( Degrees ) ( ( Degrees * M_PI * 2.0 ) / 360.0 )
 #define RadiansToDegrees( Radians ) ( ( Radians * 360.0 ) / ( ( M_PI * 2.0f ) ) )
@@ -35,7 +37,13 @@ typedef struct {
 
 #define PlayerHeight 32
 
+void Terminate( const char* Reason, ... );
+void CopyCameraToScreen( void );
+void Cleanup( void );
+bool Setup( void );
+
 extern World Worldspawn;
 extern RaycasterCamera Camera;
+extern InputManager Input;
 
 #endif

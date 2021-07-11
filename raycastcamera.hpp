@@ -9,6 +9,7 @@
 class RaycasterCamera {
 private:
     uint8_t* ScreenBuffer;
+    size_t ScreenBufferSize;
 
     float ProjPlaneDist;
     float Angle;
@@ -44,6 +45,11 @@ public:
     void Translate( float dx, float dy );
     void Translate( float Magnitude );
     void Rotate( float Amount );
+
+    void CopyScreenBuffer( uint8_t* Dest, size_t Size );
+    void CopyScreenBuffer( uint8_t* Dest, int DestPitch, int SrcX, int SrcY, int Width, int Height );
+
+    void CopyScreenBuffer32( uint32_t* Dest, const uint32_t* Palette, int Pitch );
 };
 
 #endif

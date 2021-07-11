@@ -29,7 +29,6 @@ public:
     bool IsMovingForward( void );
     bool IsMovingBackward( void );
 
-    void KeyEventCallback( SDL_Keysym Key, bool Down );
     void Update( void );
 };
 
