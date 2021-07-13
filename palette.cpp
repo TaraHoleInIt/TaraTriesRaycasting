@@ -41,7 +41,7 @@ uint8_t& Color32::operator[ ]( int Index ) {
         default: break;
     };
 
-    Terminate( "%s: Index %d is out of range. Expecting 0 to 3.", __FUNCTION__ );
+    Terminate( "%s: Index %d is out of range. Expecting 0 to 3.", __FUNCTION__, Index );
     return Temp;
 }
 
