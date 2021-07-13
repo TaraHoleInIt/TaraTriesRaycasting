@@ -42,6 +42,8 @@ void CopyCameraToScreen( void );
 void Cleanup( void );
 bool Setup( void );
 
+extern const SDL_Rect Fullscreen;
+
 extern World Worldspawn;
 extern RaycasterCamera Camera;
 extern InputManager Input;

@@ -23,6 +23,7 @@ class World {
 public:
     int operator( )( int x, int y );
 
+    World( const uint8_t* Map, int _MapWidth, int _MapHeight );
     World( void );
     ~World( void );
 
@@ -30,6 +31,9 @@ public:
     void Close( void );
 
     uint8_t TileAt( int x, int y );
+
+    int Width( void );
+    int Height( void );
 };
 
 #endif
