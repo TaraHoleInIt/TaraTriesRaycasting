@@ -7,49 +7,56 @@
 #define _RAYCASTCAMERA_H_
 
 class RaycasterCamera {
-private:
-    uint8_t* ScreenBuffer;
-    size_t ScreenBufferSize;
+    private:
+        uint8_t* ScreenBuffer;
+        size_t ScreenBufferSize;
 
-    float ProjPlaneDist;
-    float Angle;
-    float Fov;
-    float x;
-    float y;
+        float ProjPlaneDist;
+        float Angle;
+        float Fov;
+        float x;
+        float y;
 
-    int ScreenWidth;
-    int ScreenHeight;
+        int ScreenWidth;
+        int ScreenHeight;
 
-    float GetAngleBetweenRays( void );
-    float ClampAngle( float Input );
+        World* Level;
 
-    void DrawCeiling( void );
-    void DrawFloor( void );
+        float GetAngleBetweenRays( void );
+        float ClampAngle( float Input );
 
-    void SetupProjectionPlane( void );
+        void DrawCeiling( void );
+        void DrawFloor( void );
 
-    bool AllocateScreenBuffer( void );
-    void FreeScreenBuffer( void );
+        void SetupProjectionPlane( void );
 
-public:
-    RaycasterCamera( void ) = delete;
-    RaycasterCamera( int _ScreenWidth, int _ScreenHeight );
-    RaycasterCamera( int _ScreenWidth, int _ScreenHeight, float _Fov );
-    RaycasterCamera( int _ScreenWidth, int _ScreenHeight, float _Fov, float _x, float _y );
-    RaycasterCamera( int _ScreenWidth, int _ScreenHeight, float _Fov, float _x, float _y, float _Angle );
-    ~RaycasterCamera( void );
+        bool AllocateScreenBuffer( void );
+        void FreeScreenBuffer( void );
 
-    void DrawCamera( SDL_Renderer* RenderTarget, int Radius );
-    void Draw3D( SDL_Renderer* RenderTarget );
-    
-    void Translate( float dx, float dy );
-    void Translate( float Magnitude );
-    void Rotate( float Amount );
+    public:
+        void operator <<( World& _Map );
 
-    void CopyScreenBuffer( uint8_t* Dest, size_t Size );
-    void CopyScreenBuffer( uint8_t* Dest, int DestPitch, int SrcX, int SrcY, int Width, int Height );
+        void operator >>( uint8_t* Buffer );
+        void operator >>( uint32_t* Buffer );
 
-    void CopyScreenBuffer32( uint32_t* Dest, const uint32_t* Palette, int Pitch );
+        RaycasterCamera( void ) = delete;
+        RaycasterCamera( int _ScreenWidth, int _ScreenHeight );
+        RaycasterCamera( int _ScreenWidth, int _ScreenHeight, float _Fov );
+        RaycasterCamera( int _ScreenWidth, int _ScreenHeight, float _Fov, float _x, float _y );
+        RaycasterCamera( int _ScreenWidth, int _ScreenHeight, float _Fov, float _x, float _y, float _Angle );
+        ~RaycasterCamera( void );
+
+        void DrawCamera( SDL_Renderer* RenderTarget, int Radius );
+        void Draw3D( SDL_Renderer* RenderTarget );
+        
+        void Translate( float dx, float dy );
+        void Translate( float Magnitude );
+        void Rotate( float Amount );
+
+        void CopyScreenBuffer( uint8_t* Dest, size_t Size );
+        void CopyScreenBuffer( uint8_t* Dest, int DestPitch, int SrcX, int SrcY, int Width, int Height );
+
+        void CopyScreenBuffer32( uint32_t* Dest, const uint32_t* Palette, int Pitch );
 };
 
 #endif

@@ -91,9 +91,12 @@ bool Setup( void ) {
 		Terminate( SDL_GetError( ) );
 	}
 
-	if ( ( GameTexture = SDL_CreateTexture( RenderHandle, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STREAMING, MainScreenWidth, MainScreenHeight ) ) == NULL ) {
+	if ( ( GameTexture = SDL_CreateTexture( RenderHandle, SDL_PIXELFORMAT_BGRA32, SDL_TEXTUREACCESS_STREAMING, MainScreenWidth, MainScreenHeight ) ) == NULL ) {
 		Terminate( "Failed to create render texture", SDL_GetError( ) );
 	}
+
+	SDL_RenderSetIntegerScale( RenderHandle, SDL_TRUE );
+	SDL_RenderSetScale( RenderHandle, 4.0f, 4.0f );
 
 	return true;
 }
@@ -108,6 +111,10 @@ void CopyCameraToScreen( void ) {
 
 	SDL_RenderCopy( RenderHandle, GameTexture, &Fullscreen, &Fullscreen );
 }
+
+// todo:
+// something
+Palette GamePalette( 256 );
 
 int main( int Argc, char** Argv ) {
 	SDL_Event Ev;
@@ -159,7 +166,7 @@ int main( int Argc, char** Argv ) {
 
 			//Worldspawn.Draw2D( RenderHandle, 64 );
 			//Camera.DrawCamera( RenderHandle, 8 );
-			Camera.Draw3D( RenderHandle );
+			//Camera.Draw3D( RenderHandle );
 
 			CopyCameraToScreen( );
 

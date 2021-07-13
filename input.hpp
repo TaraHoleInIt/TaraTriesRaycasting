@@ -14,22 +14,22 @@
 #define Key_Backward 0x20
 
 class InputManager {
-private:
-    uint32_t Keys;
+    private:
+        uint32_t Keys;
 
-public:
-    InputManager( void );
+    public:
+        InputManager( void );
 
-    bool IsTurningLeft( void );
-    bool IsTurningRight( void );
+        bool IsTurningLeft( void );
+        bool IsTurningRight( void );
 
-    bool IsStrafingLeft( void );
-    bool IsStrafingRight( void );
+        bool IsStrafingLeft( void );
+        bool IsStrafingRight( void );
 
-    bool IsMovingForward( void );
-    bool IsMovingBackward( void );
+        bool IsMovingForward( void );
+        bool IsMovingBackward( void );
 
-    void Update( void );
+        void Update( void );
 };
 
 #endif

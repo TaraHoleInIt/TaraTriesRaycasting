@@ -12,9 +12,14 @@
 #include <cstdarg>
 #include <SDL.h>
 
+class RaycasterCamera;
+class InputManager;
+class World;
+
 #include "raycastcamera.hpp"
 #include "input.hpp"
 #include "world.hpp"
+#include "palette.hpp"
 
 #define MakeRGBA32( r, g, b, a ) static_cast< uint32_t >( ( ( a & 0xFF ) << 24 ) | ( ( r & 0xFF ) << 16 ) | ( ( g & 0xFF ) << 8 ) | ( b & 0xFF ) )
 
@@ -26,8 +31,8 @@
 #define DegreesToRadians( Degrees ) ( ( Degrees * M_PI * 2.0 ) / 360.0 )
 #define RadiansToDegrees( Radians ) ( ( Radians * 360.0 ) / ( ( M_PI * 2.0f ) ) )
 
-#define MainScreenWidth 800
-#define MainScreenHeight 600
+#define MainScreenWidth 1280
+#define MainScreenHeight 960
 
 #define CeilingColor 0xFE
 #define FloorColor 0xFD

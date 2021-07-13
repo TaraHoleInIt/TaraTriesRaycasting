@@ -7,7 +7,7 @@ include_directories(${SDL2_INCLUDE_DIRS})
 
 set (CMAKE_CXX_STANDARD 11)
 
-add_executable(taara main.cpp raycastercamera.cpp input.cpp world.cpp)
+add_executable(taara main.cpp raycastercamera.cpp input.cpp world.cpp palette.cpp)
 target_link_libraries(taara ${SDL2_LIBRARIES})
 
 

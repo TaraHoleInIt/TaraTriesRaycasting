@@ -14,26 +14,27 @@
 #define Tile_Cyan 3
 
 class World {
-    uint8_t* Map;
+    private:
+        uint8_t* Map;
 
-    int MapWidth;
-    int MapHeight;
-    int MapSize;
+        int MapWidth;
+        int MapHeight;
+        int MapSize;
 
-public:
-    int operator( )( int x, int y );
+    public:
+        int operator( )( int x, int y );
 
-    World( const uint8_t* Map, int _MapWidth, int _MapHeight );
-    World( void );
-    ~World( void );
+        World( const uint8_t* Map, int _MapWidth, int _MapHeight );
+        World( void );
+        ~World( void );
 
-    bool LoadFromMemory( const uint8_t* _Map, int _MapWidth, int _MapHeight );
-    void Close( void );
+        bool LoadFromMemory( const uint8_t* _Map, int _MapWidth, int _MapHeight );
+        void Close( void );
 
-    uint8_t TileAt( int x, int y );
+        uint8_t TileAt( int x, int y );
 
-    int Width( void );
-    int Height( void );
+        int Width( void );
+        int Height( void );
 };
 
 #endif

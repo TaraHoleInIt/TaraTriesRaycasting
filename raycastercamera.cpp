@@ -6,6 +6,7 @@
 #include "main.hpp"
 
 RaycasterCamera::RaycasterCamera( int _ScreenWidth, int _ScreenHeight ) : \
+    Level( NULL ), \
     ScreenWidth( _ScreenWidth ), \
     ScreenHeight( _ScreenHeight ), \
     Fov( 60.0f ), \
@@ -17,6 +18,7 @@ RaycasterCamera::RaycasterCamera( int _ScreenWidth, int _ScreenHeight ) : \
 }
 
 RaycasterCamera::RaycasterCamera( int _ScreenWidth, int _ScreenHeight, float _Fov ) : \
+    Level( NULL ), \
     ScreenWidth( _ScreenWidth ), \
     ScreenHeight( _ScreenHeight ), \
     x( 0.0f ), \
@@ -28,6 +30,7 @@ RaycasterCamera::RaycasterCamera( int _ScreenWidth, int _ScreenHeight, float _Fo
 }
 
 RaycasterCamera::RaycasterCamera( int _ScreenWidth, int _ScreenHeight, float _Fov, float _x, float _y ) : \
+    Level( NULL ), \
     ScreenWidth( _ScreenWidth ), \
     ScreenHeight( _ScreenHeight ), \
     x( _x ), \
@@ -39,6 +42,7 @@ RaycasterCamera::RaycasterCamera( int _ScreenWidth, int _ScreenHeight, float _Fo
 }
 
 RaycasterCamera::RaycasterCamera( int _ScreenWidth, int _ScreenHeight, float _Fov, float _x, float _y, float _Angle ) : \
+    Level( NULL ), \
     ScreenWidth( _ScreenWidth ), \
     ScreenHeight( _ScreenHeight ), \
     x( _x ), \
@@ -265,4 +269,15 @@ void RaycasterCamera::CopyScreenBuffer32( uint32_t* Dest, const uint32_t* Palett
             Dest+= ( ( this->ScreenWidth - Pitch ) >> 2 );
         }
     }
+}
+
+void RaycasterCamera::operator<<( World& Map ) {
+    this->Level = &Map;
+}
+
+void RaycasterCamera::operator>>( uint8_t* Buffer ) {
+    memcpy( Buffer, this->ScreenBuffer, this->ScreenBufferSize );
+}
+
+void RaycasterCamera::operator>>( uint32_t* Buffer ) {
 }
