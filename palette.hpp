@@ -31,10 +31,15 @@ class Palette {
         int Length;
 
     public:
+        Palette( const Palette& In );
+        Palette( int Size, const Color32* In );
+
         Palette( int Size );
         ~Palette( void );
 
         Color32& operator[ ]( int Index );
+
+        void operator=( const Color32* p );
 };
 
 #endif

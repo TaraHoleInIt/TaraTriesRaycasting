@@ -83,3 +83,15 @@ Color32& Palette::operator[ ]( int Index ) {
 
     return this->Colormap[ Index ];
 }
+
+Palette::Palette( const Palette& In ) {
+    
+}
+
+Palette::Palette( int Size, const Color32* In ) : Palette( Size ) {
+    memcpy( this->Colormap, In, Size * sizeof( Color32 ) );
+}
+
+void Palette::operator=( const Color32* p ) {
+    memcpy( this->Colormap, p, this->Length * sizeof( Color32 ) );
+}

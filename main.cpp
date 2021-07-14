@@ -112,12 +112,16 @@ void CopyCameraToScreen( void ) {
 	SDL_RenderCopy( RenderHandle, GameTexture, &Fullscreen, &Fullscreen );
 }
 
+Color32 t[ 256 ];
+
 // todo:
 // something
 Palette GamePalette( 256 );
 
 int main( int Argc, char** Argv ) {
 	SDL_Event Ev;
+
+	GamePalette = t;
 
 	atexit( Cleanup );
 
